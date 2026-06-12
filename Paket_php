@@ -1,0 +1,165 @@
+<?php
+session_start();
+include 'koneksi.php';
+
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: login_admin.php");
+    exit;
+}
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Kelola Paket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background: #f5f5f5;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: black;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 10px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar a:hover {
+            background: red;
+            border-radius: 8px;
+        }
+
+        .content {
+            margin-left: 250px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .container {
+            width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(255, 0, 0, 0.1);
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: darkgreen;
+        }
+
+        hr {
+            margin: 30px 0;
+        }
+
+        .paket-item {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 5px solid green;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <h2>Admin</h2>
+        <a href="admin.php">Dashboard</a>
+        <a href="paket.php">Paket Foto</a>
+        <a href="tambah_galeri.php">Galeri</a>
+        <a href="booking_admin.php">Booking</a>
+        <a href="review_admin.php">Review</a>
+        <a href="logout.php">Logout</a>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <h2>Kelola Paket Foto</h2>
+
+            <!-- Form mengarah ke proses.php -->
+            <form action="proses.php" method="POST">
+                <input type="text" name="nama_paket" placeholder="Nama Paket" required>
+                <input type="number" name="harga" placeholder="Harga" required>
+
+                <button type="submit" name="tambah_paket">
+                    Tambah Paket
+                </button>
+            </form>
+
+            <hr>
+
+            <h3>Daftar Paket</h3>
+
+            <?php
+            // Ambil data dari tabel 'paket'
+            $data = mysqli_query($conn, "SELECT * FROM paket ORDER BY id_paket DESC");
+
+            if (mysqli_num_rows($data) > 0) {
+                while ($d = mysqli_fetch_array($data)) {
+            ?>
+                    <div class="paket-item">
+                        <strong><?php echo htmlspecialchars($d['nama_paket']); ?></strong>
+                        <br>
+                        <!-- Menggunakan kolom 'harga' sesuai database kamu -->
+                        Rp <?php echo number_format((int)$d['harga'], 0, ',', '.'); ?>
+                    </div>
+            <?php
+                }
+            } else {
+                echo "<p style='color:gray;'>Belum ada paket tersedia.</p>";
+            }
+            ?>
+
+        </div>
+    </div>
+
+</body>
+</html>
